@@ -878,10 +878,14 @@ public final class FilePath implements SerializableOnlyOverRemoting {
                     // follows redirect
                     if (maxRedirects > 0) {
                         String location = httpCon.getHeaderField("Location");
-                        listener.getLogger().println("Following redirect " + archive.toExternalForm() + " -> " + location);
+                        if (listener != null) {
+                            listener.getLogger().println("Following redirect " + archive.toExternalForm() + " -> " + location);
+                        }
                         return installIfNecessaryFrom(getUrlFactory().newURL(location), listener, message, maxRedirects - 1);
                     } else {
-                        listener.getLogger().println("Skipping installation of " + archive + " to " + remote + " due to too many redirects.");
+                        if (listener != null) {
+                            listener.getLogger().println("Skipping installation of " + archive + " to " + remote + " due to too many redirects.");
+                        }
                         return false;
                     }
                 }
@@ -889,7 +893,9 @@ public final class FilePath implements SerializableOnlyOverRemoting {
                     if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
                         return false;
                     } else if (responseCode != HttpURLConnection.HTTP_OK) {
-                        listener.getLogger().println("Skipping installation of " + archive + " to " + remote + " due to server error: " + responseCode + " " + httpCon.getResponseMessage());
+                        if (listener != null) {
+                            listener.getLogger().println("Skipping installation of " + archive + " to " + remote + " due to server error: " + responseCode + " " + httpCon.getResponseMessage());
+                        }
                         return false;
                     }
                 }
